@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Moderner Buchgenerator! Erstellt professionelle E-Books mit KI-gestützter Inhaltsgenerierung.">
+    <link rel="stylesheet" href="css/modern-style.css">
+	<title>Modern Book Generator - Kontakt</title>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+	<header class="header">
+		<div class="header-content">
+			<div class="logo">
+				<i class="fas fa-book-open"></i>
+				<h1>Modern Book Generator</h1>
+			</div>
+			<nav class="nav">
+				<a href="index.html" class="nav-link">Start</a>
+				<a href="1-ueber_uns.html" class="nav-link">Über uns</a>
+				<a href="1-datenschutz.html" class="nav-link">Datenschutz</a>
+				<a href="1-impressum.html" class="nav-link">Impressum</a>
+				<a href="2-contact.html" class="nav-link active">Kontakt</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="main">
+		<section class="hero">
+			<div class="hero-content">
+				<h2>Kontakt</h2>
+				<p>Nehmen Sie Kontakt mit uns auf</p>
+			</div>
+		</section>
+
+		<section class="form-section">
+			<div class="form-container">
+				<h3><i class="fas fa-envelope"></i> Kontaktinformationen</h3>
+				<div class="contact-content">
+					<div class="contact-info">
+						<div class="contact-item">
+							<div class="contact-icon">
+								<i class="fas fa-user"></i>
+							</div>
+							<div class="contact-details">
+								<h4>Dipl.-Ing. (FH) Dominic Bilke</h4>
+								<p>Web- und Softwareentwicklung</p>
+							</div>
+						</div>
+						
+						<div class="contact-item">
+							<div class="contact-icon">
+								<i class="fas fa-globe"></i>
+							</div>
+							<div class="contact-details">
+								<h4>Website</h4>
+								<a href="https://www.web-software-entwicklung.de" target="_blank" class="contact-link">
+									www.web-software-entwicklung.de
+								</a>
+							</div>
+						</div>
+						
+						<div class="contact-item">
+							<div class="contact-icon">
+								<i class="fas fa-envelope"></i>
+							</div>
+							<div class="contact-details">
+								<h4>E-Mail</h4>
+								<a href="mailto:info@web-software-entwicklung.de" class="contact-link">
+									info@web-software-entwicklung.de
+								</a>
+							</div>
+						</div>
+						
+						<div class="contact-item">
+							<div class="contact-icon">
+								<i class="fas fa-phone"></i>
+							</div>
+							<div class="contact-details">
+								<h4>Telefon</h4>
+								<a href="tel:+49123456789" class="contact-link">
+									+49 123 456789
+								</a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="contact-cta">
+						<h4><i class="fas fa-lightbulb"></i> Haben Sie ein Projekt?</h4>
+						<p>Lassen Sie uns gemeinsam Ihr nächstes Web- oder Softwareprojekt verwirklichen. Kontaktieren Sie uns für ein unverbindliches Gespräch.</p>
+						<a href="mailto:info@web-software-entwicklung.de" class="btn btn-primary">
+							<i class="fas fa-paper-plane"></i> Nachricht senden
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="footer-content">
+			<p>&copy; 2024 Modern Book Generator. Erstellt mit <i class="fas fa-heart"></i> und KI.</p>
+		</div>
+	</footer>
+</div>
+
+<style>
+.contact-content {
+	text-align: left;
+}
+
+.contact-info {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.contact-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.5rem;
+	background: var(--bg-secondary);
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--border-color);
+	transition: all 0.2s ease;
+}
+
+.contact-item:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-md);
+}
+
+.contact-icon {
+	width: 3rem;
+	height: 3rem;
+	background: var(--primary-color);
+	color: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+	flex-shrink: 0;
+}
+
+.contact-details h4 {
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin-bottom: 0.25rem;
+}
+
+.contact-details p {
+	color: var(--text-secondary);
+	margin: 0;
+}
+
+.contact-link {
+	color: var(--primary-color);
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.2s ease;
+}
+
+.contact-link:hover {
+	color: var(--primary-dark);
+}
+
+.contact-cta {
+	background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+	color: white;
+	padding: 2rem;
+	border-radius: var(--radius-lg);
+	text-align: center;
+}
+
+.contact-cta h4 {
+	font-size: 1.3rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+
+.contact-cta p {
+	margin-bottom: 1.5rem;
+	opacity: 0.9;
+	line-height: 1.6;
+}
+
+.contact-cta .btn {
+	background: white;
+	color: var(--primary-color);
+	border: 2px solid white;
+}
+
+.contact-cta .btn:hover {
+	background: transparent;
+	color: white;
+}
+
+@media (max-width: 768px) {
+	.contact-item {
+		flex-direction: column;
+		text-align: center;
+	}
+	
+	.contact-icon {
+		margin-bottom: 0.5rem;
+	}
+}
+</style>
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Moderner Buchgenerator! Erstellt professionelle E-Books mit KI-gestützter Inhaltsgenerierung." />
+    <link rel="stylesheet" href="css/modern-style.css">
+	<title>Modern Book Generator</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+	<header class="header">
+		<div class="header-content">
+			<div class="logo">
+				<i class="fas fa-book-open"></i>
+				<h1>Modern Book Generator</h1>
+			</div>
+			<nav class="nav">
+				<a href="index.html" class="nav-link active">Start</a>
+				<a href="1-ueber_uns.html" class="nav-link">Über uns</a>
+				<a href="1-datenschutz.html" class="nav-link">Datenschutz</a>
+				<a href="1-impressum.html" class="nav-link">Impressum</a>
+				<a href="2-contact.html" class="nav-link">Kontakt</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="main">
+		<section class="hero">
+			<div class="hero-content">
+				<h2>Erstellen Sie professionelle E-Books mit KI</h2>
+				<p>Unser moderner Buchgenerator nutzt fortschrittliche KI-Technologie, um maßgeschneiderte E-Books mit professionellem Layout, Bildern und strukturiertem Inhalt zu erstellen.</p>
+				<div class="features">
+					<div class="feature">
+						<i class="fas fa-magic"></i>
+						<span>KI-gestützte Inhaltsgenerierung</span>
+					</div>
+					<div class="feature">
+						<i class="fas fa-palette"></i>
+						<span>Modernes Design</span>
+					</div>
+					<div class="feature">
+						<i class="fas fa-download"></i>
+						<span>Sofortiger PDF-Download</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="form-section">
+			<div class="form-container">
+				<h3><i class="fas fa-edit"></i> Buch erstellen</h3>
+				<form action="generate_book.php" method="post" id="bookForm" class="book-form">
+					<div class="form-grid">
+						<div class="form-group">
+							<label for="Titel">Buchtitel *</label>
+							<input name="Titel" type="text" required placeholder="z.B. Die Zukunft der künstlichen Intelligenz" />
+						</div>
+						
+						<div class="form-group">
+							<label for="Author">Autor *</label>
+							<input name="Author" type="text" required placeholder="Ihr Name" />
+						</div>
+						
+						<div class="form-group">
+							<label for="Verlag">Verlag *</label>
+							<input name="Verlag" type="text" required placeholder="Verlagsname" />
+						</div>
+						
+						<div class="form-group full-width">
+							<label for="Thema">Hauptthema *</label>
+							<input name="Thema" type="text" required id="topic" placeholder="z.B. Künstliche Intelligenz in der Medizin" />
+						</div>
+						
+						<div class="form-group full-width">
+							<label for="Themen">Kapitel/Themen (ein Thema pro Zeile) *</label>
+							<textarea name="Themen" required id="topics" rows="8" placeholder="Grundlagen der KI&#10;Maschinelles Lernen&#10;Deep Learning&#10;Anwendungen in der Praxis&#10;Zukünftige Entwicklungen"></textarea>
+						</div>
+					</div>
+					
+					<div class="form-actions">
+						<button type="button" id="generateData" class="btn btn-primary">
+							<i class="fas fa-magic"></i> Inhalte generieren
+						</button>
+						<button type="submit" id="generateBook" class="btn btn-success" style="display: none;">
+							<i class="fas fa-book"></i> E-Book erstellen
+						</button>
+					</div>
+				</form>
+			</div>
+		</section>
+
+		<section id="progressSection" class="progress-section" style="display: none;">
+			<div class="progress-container">
+				<h3><i class="fas fa-spinner fa-spin"></i> Inhalte werden generiert...</h3>
+				<div class="progress-bar">
+					<div class="progress-fill" id="progressFill"></div>
+				</div>
+				<div id="progressArea" class="progress-items"></div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="footer-content">
+			<p>&copy; 2024 Modern Book Generator. Erstellt mit <i class="fas fa-heart"></i> und KI.</p>
+		</div>
+	</footer>
+</div>
+
+<script>
+let generatedTopics = [];
+let totalTopics = 0;
+let completedTopics = 0;
+
+function updateProgress() {
+	const progress = (completedTopics / totalTopics) * 100;
+	$('#progressFill').css('width', progress + '%');
+	
+	if (completedTopics === totalTopics) {
+		$('#generateBook').show();
+		$('#progressSection h3').html('<i class="fas fa-check-circle"></i> Alle Inhalte generiert!');
+	}
+}
+
+function progressArea() {
+	// Form validation
+	for (const el of document.getElementById('bookForm').querySelectorAll("[required]")) {
+		if (!el.reportValidity()) {
+			return false;
+		}
+	}
+
+	const topic = document.getElementById('topic').value;
+	const topics = document.getElementById('topics').value.split('\n').filter(t => t.trim());
+	
+	// Add preface and afterword
+	totalTopics = topics.length + 2; // +2 for preface and afterword
+	completedTopics = 0;
+	generatedTopics = [];
+	
+	$('#progressSection').show();
+	$('#generateData').prop('disabled', true);
+	updateProgress();
+	
+	// Generate preface
+	generateContent('Vorwort', 'https://buchgenerator.dominic-bilke.de/fetch_book_data.php?Vorwort=1&Thema=' + encodeURIComponent(topic), 0);
+	
+	// Generate chapter content
+	topics.forEach((topicName, index) => {
+		if (topicName.trim()) {
+			generateContent(topicName, 'https://buchgenerator.dominic-bilke.de/fetch_book_data.php?Thema=' + encodeURIComponent(topicName), index + 1);
+		}
+	});
+	
+	// Generate afterword
+	generateContent('Nachwort', 'https://buchgenerator.dominic-bilke.de/fetch_book_data.php?Nachwort=1&Thema=' + encodeURIComponent(topic), topics.length + 1);
+}
+
+function generateContent(topicName, url, index) {
+	const progressItem = $(`
+		<div class="progress-item" id="progress_${index}">
+			<div class="progress-icon">
+				<i class="fas fa-spinner fa-spin"></i>
+			</div>
+			<div class="progress-text">
+				<strong>${topicName}</strong>
+				<span>Wird generiert...</span>
+			</div>
+		</div>
+	`);
+	
+	$('#progressArea').append(progressItem);
+	
+	$.ajax({
+		url: url,
+		success: function(data) {
+			generatedTopics[index] = data;
+			completedTopics++;
+			
+			progressItem.find('.progress-icon').html('<i class="fas fa-check-circle"></i>');
+			progressItem.find('.progress-text span').text('Generiert!');
+			progressItem.addClass('completed');
+			
+			updateProgress();
+		},
+		error: function() {
+			progressItem.find('.progress-icon').html('<i class="fas fa-exclamation-circle"></i>');
+			progressItem.find('.progress-text span').text('Fehler beim Generieren');
+			progressItem.addClass('error');
+			
+			completedTopics++;
+			updateProgress();
+		}
+	});
+}
+
+$(document).ready(function() {
+	$('#generateData').click(progressArea);
+	
+	// Auto-resize textarea
+	$('#topics').on('input', function() {
+		this.style.height = 'auto';
+		this.style.height = (this.scrollHeight) + 'px';
+	});
+});
+</script>
+
+</body>
+</html> 
