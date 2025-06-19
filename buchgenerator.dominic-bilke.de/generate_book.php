@@ -31,7 +31,7 @@ $thema = $_POST['Thema'];
 $bild = './uploads/'.uniqid().'.png';
 
 // Generate cover image
-file_put_contents($bild, file_get_contents("https://askgpt.bilke-projects.com/image_1.php?".http_build_query(array("ask" => $thema)), false, $ctx));
+file_put_contents($bild, file_get_contents("https://bookgpt.bilke-projects.com/image_1.php?".http_build_query(array("ask" => $thema)), false, $ctx));
 
 // Fetch content for each topic
 foreach($themen as $t) 

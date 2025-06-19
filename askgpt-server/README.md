@@ -1,4 +1,4 @@
-# AskGPT Server
+# BookGPT Server
 
 Backend service for the Modern Book Generator, providing AI-powered content generation using OpenAI's GPT and DALL-E APIs.
 
@@ -91,13 +91,13 @@ Backend service for the Modern Book Generator, providing AI-powered content gene
 
 ```bash
 # Generate text content
-curl "https://askgpt.bilke-projects.com/ask.php?ask=Schreibe ein Vorwort über künstliche Intelligenz"
+curl "https://bookgpt.bilke-projects.com/ask.php?ask=Schreibe ein Vorwort über künstliche Intelligenz"
 
 # Generate chapter content
-curl "https://askgpt.bilke-projects.com/topic.php?ask=Maschinelles Lernen"
+curl "https://bookgpt.bilke-projects.com/topic.php?ask=Maschinelles Lernen"
 
 # Generate book cover image
-curl "https://askgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz" -o cover.png
+curl "https://bookgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz" -o cover.png
 ```
 
 ## 🐳 Docker Deployment
@@ -111,7 +111,7 @@ curl "https://askgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz"
 
 2. **View logs**:
    ```bash
-   docker-compose logs -f askgpt-server
+   docker-compose logs -f bookgpt-server
    ```
 
 3. **Stop services**:
@@ -129,7 +129,7 @@ curl "https://askgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz"
 
 2. **Update domain in nginx.conf**:
    ```bash
-   # Edit nginx.conf and replace askgpt.bilke-projects.com with your domain
+   # Edit nginx.conf and replace bookgpt.bilke-projects.com with your domain
    ```
 
 3. **Restart with SSL**:
@@ -143,7 +143,7 @@ curl "https://askgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz"
 ### Health Check
 
 ```bash
-curl https://askgpt.bilke-projects.com/health
+curl https://bookgpt.bilke-projects.com/health
 ```
 
 Response:
@@ -151,7 +151,8 @@ Response:
 {
   "status": "healthy",
   "timestamp": "2024-01-15T10:30:00",
-  "openai_key_configured": true
+  "openai_key_configured": true,
+  "domain": "bookgpt.bilke-projects.com"
 }
 ```
 
@@ -159,7 +160,7 @@ Response:
 
 ```bash
 # Docker logs
-docker-compose logs -f askgpt-server
+docker-compose logs -f bookgpt-server
 
 # Nginx logs
 docker-compose logs -f nginx
@@ -200,7 +201,7 @@ app.add_middleware(
 
 1. **Multiple instances**:
    ```bash
-   docker-compose up -d --scale askgpt-server=3
+   docker-compose up -d --scale bookgpt-server=3
    ```
 
 2. **Load balancer configuration**:
@@ -249,7 +250,7 @@ docker-compose up
 
 ## 📝 API Documentation
 
-Visit `https://askgpt.bilke-projects.com/docs` for interactive API documentation.
+Visit `https://bookgpt.bilke-projects.com/docs` for interactive API documentation.
 
 ### Request Examples
 
@@ -258,14 +259,14 @@ import requests
 
 # Generate text
 response = requests.get(
-    "https://askgpt.bilke-projects.com/ask.php",
+    "https://bookgpt.bilke-projects.com/ask.php",
     params={"ask": "Schreibe ein Vorwort über KI"}
 )
 print(response.text)
 
 # Generate image
 response = requests.get(
-    "https://askgpt.bilke-projects.com/image_1.php",
+    "https://bookgpt.bilke-projects.com/image_1.php",
     params={"ask": "Künstliche Intelligenz"}
 )
 with open("cover.png", "wb") as f:
@@ -289,8 +290,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 For support and questions:
 - Create an issue in the repository
 - Contact: info@web-software-entwicklung.de
-- Documentation: https://askgpt.bilke-projects.com/docs
+- Documentation: https://bookgpt.bilke-projects.com/docs
 
 ---
 
-**AskGPT Server** - Powered by OpenAI GPT and DALL-E APIs 
+**BookGPT Server** - Powered by OpenAI GPT and DALL-E APIs 

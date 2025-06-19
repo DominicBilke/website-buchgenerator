@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="AskGPT Book Generator API",
-    description="Backend service for Modern Book Generator",
+    title="BookGPT Server",
+    description="Backend service for Modern Book Generator at bookgpt.bilke-projects.com",
     version="1.0.0"
 )
 
@@ -46,8 +46,9 @@ app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 async def root():
     """Root endpoint - returns service information"""
     return {
-        "service": "AskGPT Book Generator API",
+        "service": "BookGPT Server",
         "version": "1.0.0",
+        "domain": "bookgpt.bilke-projects.com",
         "endpoints": {
             "ask.php": "Generate text content",
             "topic.php": "Generate chapter content", 
@@ -185,7 +186,8 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "openai_key_configured": bool(openai.api_key)
+        "openai_key_configured": bool(openai.api_key),
+        "domain": "bookgpt.bilke-projects.com"
     }
 
 if __name__ == "__main__":

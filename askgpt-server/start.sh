@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# AskGPT Server Startup Script
-# This script sets up and starts the AskGPT server
+# BookGPT Server Startup Script
+# This script sets up and starts the BookGPT server
 
 set -e
 
-echo "🚀 Starting AskGPT Server..."
+echo "🚀 Starting BookGPT Server..."
 
 # Check if .env file exists
 if [ ! -f .env ]; then
@@ -53,6 +53,7 @@ else
     echo "   Server will be available at: http://localhost:8000"
     echo "   API docs will be available at: http://localhost:8000/docs"
     echo "   Health check: http://localhost:8000/health"
+    echo "   Domain: bookgpt.bilke-projects.com"
     echo ""
     echo "Press Ctrl+C to stop the server"
     echo ""

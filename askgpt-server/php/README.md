@@ -1,258 +1,279 @@
-# AskGPT Server - PHP Version
+# BookGPT Server - PHP Version
 
-PHP implementation of the AskGPT server for the Modern Book Generator backend service.
+PHP-basierte Backend-Implementierung für den Modern Book Generator mit OpenAI GPT und DALL-E Integration.
 
-## 📋 Requirements
+## 🚀 Features
 
-- PHP 7.4 or higher
-- cURL extension
-- JSON extension
-- OpenAI API key
-- Web server (Apache/Nginx)
+- **Textgenerierung**: Vorwort, Kapitel und Nachwort via ChatGPT
+- **Bildgenerierung**: Buchcover via DALL-E
+- **RESTful API**: Einfache HTTP-Endpoints
+- **Fehlerbehandlung**: Robuste Error-Handling
+- **CORS-Support**: Cross-Origin Resource Sharing
+- **Health Check**: Systemüberwachung
+
+## 📋 Voraussetzungen
+
+- PHP 8.0+
+- cURL Extension
+- OpenAI API Key
+- Web Server (Apache/Nginx)
 
 ## 🛠️ Installation
 
-### 1. Upload Files
-
-Upload the PHP files to your web server directory:
-```
-/var/www/html/askgpt/
-├── ask.php
-├── topic.php
-├── image_1.php
-├── health.php
-└── uploads/          # Create this directory
-```
-
-### 2. Set Environment Variables
-
-Set your OpenAI API key as an environment variable:
-
-**Apache (.htaccess):**
-```apache
-SetEnv OPENAI_API_KEY "your_openai_api_key_here"
-```
-
-**Nginx:**
-```nginx
-fastcgi_param OPENAI_API_KEY "your_openai_api_key_here";
-```
-
-**PHP (php.ini or .user.ini):**
-```ini
-env[OPENAI_API_KEY] = "your_openai_api_key_here"
-```
-
-### 3. Set Permissions
+### 1. Dateien hochladen
 
 ```bash
+# Alle PHP-Dateien in das Web-Verzeichnis kopieren
+cp *.php /var/www/html/bookgpt/
+```
+
+### 2. Umgebungsvariablen setzen
+
+```bash
+# .env Datei erstellen
+cat > .env << EOF
+OPENAI_API_KEY=your_openai_api_key_here
+EOF
+```
+
+### 3. Berechtigungen setzen
+
+```bash
+chmod 644 *.php
 chmod 755 uploads/
-chown www-data:www-data uploads/
 ```
 
-## 🔧 Configuration
+## 🔧 Konfiguration
 
-### Environment Variables
+### Umgebungsvariablen
 
-| Variable | Description | Required |
+| Variable | Beschreibung | Beispiel |
 |----------|-------------|----------|
-| `OPENAI_API_KEY` | Your OpenAI API key | Yes |
+| `OPENAI_API_KEY` | OpenAI API Schlüssel | `sk-...` |
 
-### API Endpoints
+### API-Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/ask.php` | GET | Generate text content |
-| `/topic.php` | GET | Generate chapter content |
-| `/image_1.php` | GET | Generate book cover image |
-| `/health.php` | GET | Health check |
+| Endpoint | Methode | Parameter | Beschreibung |
+|----------|---------|-----------|--------------|
+| `/ask.php` | GET | `ask` | Textgenerierung |
+| `/topic.php` | GET | `ask` | Kapitelgenerierung |
+| `/image_1.php` | GET | `ask` | Bildgenerierung |
+| `/health.php` | GET | - | Systemstatus |
 
-### Example Usage
+## 📖 Verwendung
+
+### Text generieren
 
 ```bash
-# Generate text content
-curl "https://askgpt.bilke-projects.com/ask.php?ask=Schreibe ein Vorwort über künstliche Intelligenz"
-
-# Generate chapter content
-curl "https://askgpt.bilke-projects.com/topic.php?ask=Maschinelles Lernen"
-
-# Generate book cover image
-curl "https://askgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz" -o cover.png
-
-# Health check
-curl "https://askgpt.bilke-projects.com/health.php"
+curl "https://bookgpt.bilke-projects.com/ask.php?ask=Schreibe ein Vorwort über künstliche Intelligenz"
 ```
 
-## 🔒 Security
+### Kapitel generieren
 
-### Input Validation
-
-- All inputs are validated for length (max 1000 characters)
-- CORS headers are set for cross-origin requests
-- Error messages are logged but don't expose sensitive information
-
-### Rate Limiting
-
-Consider implementing rate limiting at the web server level:
-
-**Apache (.htaccess):**
-```apache
-<IfModule mod_ratelimit.c>
-    <Location "/ask.php">
-        SetOutputFilter RATE_LIMIT
-        SetEnv rate-limit 10
-    </Location>
-</IfModule>
+```bash
+curl "https://bookgpt.bilke-projects.com/topic.php?ask=Maschinelles Lernen"
 ```
 
-**Nginx:**
-```nginx
-limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+### Bild generieren
 
-location ~ \.php$ {
-    limit_req zone=api burst=20 nodelay;
-    # ... other configuration
-}
+```bash
+curl "https://bookgpt.bilke-projects.com/image_1.php?ask=Künstliche Intelligenz" -o cover.png
+```
+
+### Health Check
+
+```bash
+curl "https://bookgpt.bilke-projects.com/health.php"
+```
+
+## 🔒 Sicherheit
+
+### Empfohlene Maßnahmen
+
+1. **HTTPS verwenden**:
+   ```apache
+   RewriteEngine On
+   RewriteCond %{HTTPS} off
+   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+   ```
+
+2. **Rate Limiting**:
+   ```apache
+   # In .htaccess
+   <IfModule mod_ratelimit.c>
+       SetOutputFilter RATE_LIMIT
+       SetEnv rate-limit 10
+   </IfModule>
+   ```
+
+3. **Input Validation**:
+   ```php
+   // In jeder PHP-Datei
+   $ask = filter_input(INPUT_GET, 'ask', FILTER_SANITIZE_STRING);
+   if (empty($ask)) {
+       http_response_code(400);
+       die('Parameter "ask" ist erforderlich');
+   }
+   ```
+
+## 🐛 Troubleshooting
+
+### Häufige Probleme
+
+1. **API Key Fehler**:
+   ```bash
+   # Prüfen Sie die Umgebungsvariable
+   echo $OPENAI_API_KEY
+   
+   # Oder in PHP
+   var_dump(getenv('OPENAI_API_KEY'));
+   ```
+
+2. **cURL Fehler**:
+   ```bash
+   # cURL Extension prüfen
+   php -m | grep curl
+   
+   # Oder in PHP
+   var_dump(extension_loaded('curl'));
+   ```
+
+3. **Berechtigungsfehler**:
+   ```bash
+   # Schreibrechte prüfen
+   ls -la uploads/
+   
+   # Berechtigungen setzen
+   chmod 755 uploads/
+   ```
+
+### Debug-Modus
+
+```php
+// Am Anfang jeder PHP-Datei
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', '/var/log/php_errors.log');
 ```
 
 ## 📊 Monitoring
+
+### Logs überwachen
+
+```bash
+# PHP-Fehlerprotokoll
+tail -f /var/log/php_errors.log
+
+# Apache/Nginx Logs
+tail -f /var/log/apache2/access.log
+tail -f /var/log/nginx/access.log
+```
 
 ### Health Check Response
 
 ```json
 {
-    "status": "healthy",
-    "timestamp": "2024-01-15T10:30:00+00:00",
-    "openai_key_configured": true,
-    "extensions": {
-        "curl": true,
-        "json": true
-    },
-    "uploads_writable": true,
-    "server_info": {
-        "php_version": "8.1.0",
-        "server_software": "Apache/2.4.41",
-        "memory_limit": "128M",
-        "max_execution_time": "30"
-    }
+  "status": "healthy",
+  "timestamp": "2024-01-15T10:30:00",
+  "openai_key_configured": true,
+  "domain": "bookgpt.bilke-projects.com",
+  "php_version": "8.1.0",
+  "curl_available": true
 }
 ```
 
-### Logging
+## 🚀 Deployment
 
-All errors are logged to the PHP error log. Check your server's error log for debugging:
+### Production Setup
 
-```bash
-# Apache
-tail -f /var/log/apache2/error.log
+1. **Webserver konfigurieren**:
+   ```apache
+   <VirtualHost *:80>
+       ServerName bookgpt.bilke-projects.com
+       DocumentRoot /var/www/bookgpt
+       
+       <Directory /var/www/bookgpt>
+           AllowOverride All
+           Require all granted
+       </Directory>
+   </VirtualHost>
+   ```
 
-# Nginx
-tail -f /var/log/nginx/error.log
+2. **SSL-Zertifikat**:
+   ```bash
+   certbot --apache -d bookgpt.bilke-projects.com
+   ```
+
+3. **Monitoring einrichten**:
+   ```bash
+   # Cron-Job für Health Checks
+   */5 * * * * curl -f https://bookgpt.bilke-projects.com/health.php || echo "Service down"
+   ```
+
+## 📝 API-Dokumentation
+
+### Request-Format
+
+Alle Endpoints erwarten GET-Requests mit Query-Parametern:
+
+```
+https://bookgpt.bilke-projects.com/endpoint.php?parameter=value
 ```
 
-## 🐛 Troubleshooting
+### Response-Format
 
-### Common Issues
+- **Text-Endpoints**: Plain Text
+- **Image-Endpoints**: Binary Image Data
+- **Health-Endpoint**: JSON
 
-1. **OpenAI API Key Not Set**
-   ```bash
-   # Check if environment variable is set
-   php -r "echo getenv('OPENAI_API_KEY') ? 'Set' : 'Not set';"
-   ```
-
-2. **cURL Extension Missing**
-   ```bash
-   # Check if cURL is installed
-   php -m | grep curl
-   ```
-
-3. **Uploads Directory Not Writable**
-   ```bash
-   # Check permissions
-   ls -la uploads/
-   chmod 755 uploads/
-   ```
-
-4. **Memory Limit Exceeded**
-   ```ini
-   # Increase memory limit in php.ini
-   memory_limit = 256M
-   ```
-
-### Debug Mode
-
-Enable error reporting for debugging:
+### Error-Responses
 
 ```php
-// Add to the top of any PHP file
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// 400 Bad Request
+http_response_code(400);
+echo "Parameter 'ask' ist erforderlich";
+
+// 500 Internal Server Error
+http_response_code(500);
+echo "Fehler bei der API-Anfrage: " . $error_message;
 ```
 
-## 🚀 Performance
+## 🔄 Migration von Python
 
-### Optimization Tips
+### Unterschiede
 
-1. **Enable OPcache**
-   ```ini
-   opcache.enable=1
-   opcache.memory_consumption=128
-   opcache.interned_strings_buffer=8
-   opcache.max_accelerated_files=4000
-   ```
+| Feature | Python (FastAPI) | PHP |
+|---------|------------------|-----|
+| Framework | FastAPI | Vanilla PHP |
+| Performance | Höher | Geringer |
+| Deployment | Docker | Traditional |
+| Monitoring | Built-in | Manual |
 
-2. **Use FastCGI**
-   ```nginx
-   location ~ \.php$ {
-       fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-       fastcgi_index index.php;
-       include fastcgi_params;
-   }
-   ```
+### Migration Guide
 
-3. **Enable Compression**
-   ```apache
-   <IfModule mod_deflate.c>
-       AddOutputFilterByType DEFLATE text/plain
-       AddOutputFilterByType DEFLATE application/json
-   </IfModule>
-   ```
+1. **Endpoints identisch**: Gleiche URL-Struktur
+2. **Parameter identisch**: Gleiche Query-Parameter
+3. **Response identisch**: Gleiche Ausgabeformate
 
-## 🔄 Migration from Python
+## 🤝 Contributing
 
-If you're migrating from the Python FastAPI version:
+1. Fork das Repository
+2. Feature Branch erstellen
+3. Änderungen committen
+4. Pull Request erstellen
 
-1. **Update URLs**: The endpoints remain the same
-2. **Environment Variables**: Set `OPENAI_API_KEY` in your web server configuration
-3. **File Structure**: Ensure the `uploads/` directory exists and is writable
-4. **Testing**: Use the health check endpoint to verify everything is working
+## 📄 Lizenz
 
-## 📝 API Documentation
+Dieses Projekt ist unter der MIT Lizenz lizenziert.
 
-### Request Parameters
+## 🆘 Support
 
-All endpoints accept a GET parameter `ask` containing the prompt or topic.
-
-### Response Formats
-
-- **Text endpoints** (`ask.php`, `topic.php`): Return plain text
-- **Image endpoint** (`image_1.php`): Returns PNG image data
-- **Health endpoint** (`health.php`): Returns JSON
-
-### Error Handling
-
-All endpoints return appropriate HTTP status codes:
-- `200`: Success
-- `400`: Bad request (missing or invalid parameters)
-- `500`: Server error (API issues, configuration problems)
-
-## 🤝 Support
-
-For support and questions:
-- Check the health endpoint for system status
-- Review server error logs
-- Contact: info@web-software-entwicklung.de
+Bei Fragen und Problemen:
+- Issue im Repository erstellen
+- Kontakt: info@web-software-entwicklung.de
+- Dokumentation: https://bookgpt.bilke-projects.com/docs
 
 ---
 
-**AskGPT Server PHP** - Simple, reliable PHP implementation for AI-powered content generation 
+**BookGPT Server - PHP Version** - Powered by OpenAI GPT & DALL-E APIs 

@@ -24,17 +24,17 @@ $ctx = stream_context_create(array('http'=>
 $_GET['Thema'] = str_replace('.html', '', $_GET['Thema']);
 
 if(isset($_GET['Vorwort'])) {
-	file_put_contents('./uploads/'.$_GET['Thema'].'_vorwort.html', nl2br(curl_file_get_contents("https://askgpt.bilke-projects.com/ask.php?".http_build_query(array("ask" => 'Schreibe ein ausführliches Vorwort für das Thema '.$_GET['Thema'])))));
+	file_put_contents('./uploads/'.$_GET['Thema'].'_vorwort.html', nl2br(curl_file_get_contents("https://bookgpt.bilke-projects.com/ask.php?".http_build_query(array("ask" => 'Schreibe ein ausführliches Vorwort für das Thema '.$_GET['Thema'])))));
 	echo $_GET['Thema'].'_vorwort.html';
 }
 else if(isset($_GET['Nachwort'])) {
-	file_put_contents('./uploads/'.$_GET['Thema'].'_nachwort.html', nl2br(curl_file_get_contents("https://askgpt.bilke-projects.com/ask.php?".http_build_query(array("ask" => 'Schreibe ein ausführliches Nachwort für das Thema '.$_GET['Thema'])))));
+	file_put_contents('./uploads/'.$_GET['Thema'].'_nachwort.html', nl2br(curl_file_get_contents("https://bookgpt.bilke-projects.com/ask.php?".http_build_query(array("ask" => 'Schreibe ein ausführliches Nachwort für das Thema '.$_GET['Thema'])))));
 	echo $_GET['Thema'].'_nachwort.html';
 }
 
 
 else if(isset($_GET['Thema'])) {
-	file_put_contents('./uploads/'.$_GET['Thema'].'.html', curl_file_get_contents("https://askgpt.bilke-projects.com/topic.php?".http_build_query(array("ask" => $_GET['Thema']))));
+	file_put_contents('./uploads/'.$_GET['Thema'].'.html', curl_file_get_contents("https://bookgpt.bilke-projects.com/topic.php?".http_build_query(array("ask" => $_GET['Thema']))));
 	echo $_GET['Thema'].'.html';
 }
 ?>
