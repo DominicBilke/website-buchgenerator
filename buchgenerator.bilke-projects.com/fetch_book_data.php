@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+ header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json; charset=utf-8');
 
 function call_python_script($command) {
@@ -17,7 +17,7 @@ function call_python_script($command) {
         throw new Exception($result['error']);
     }
     
-    return $result;
+return $result;
 }
 
 ini_set('default_socket_timeout', 1200);
@@ -32,25 +32,25 @@ $ctx = stream_context_create(array('http'=>
 $_GET['Thema'] = str_replace('.html', '', $_GET['Thema']);
 
 try {
-    if(isset($_GET['Vorwort'])) {
+if(isset($_GET['Vorwort'])) {
         $prompt = 'Write a detailed introduction for the topic "' . $_GET['Thema'] . '" in ' . $_GET['Sprache'] . '!';
         $command = "python3 ai_generator.py text " . escapeshellarg($prompt);
         $result = call_python_script($command);
         
         $texthtml = $result['text'];
-        file_put_contents('uploads/'.$_GET['Thema'].'_vorwort.html', $texthtml, false, $ctx);
+	file_put_contents('uploads/'.$_GET['Thema'].'_vorwort.html', $texthtml, false, $ctx);
         echo json_encode(['success' => true, 'file' => $_GET['Thema'].'_vorwort.html']);
-    }
-    else if(isset($_GET['Nachwort'])) {
+}
+else if(isset($_GET['Nachwort'])) {
         $prompt = 'Write a detailed finish for the topic "' . $_GET['Thema'] . '" in ' . $_GET['Sprache'] . '!';
         $command = "python3 ai_generator.py text " . escapeshellarg($prompt);
         $result = call_python_script($command);
         
         $texthtml = $result['text'];
-        file_put_contents('uploads/'.$_GET['Thema'].'_nachwort.html', $texthtml, false, $ctx);
+	file_put_contents('uploads/'.$_GET['Thema'].'_nachwort.html', $texthtml, false, $ctx);
         echo json_encode(['success' => true, 'file' => $_GET['Thema'].'_nachwort.html']);
-    }
-    else if(isset($_GET['Thema'])) {
+}
+else if(isset($_GET['Thema'])) {
         // Generate complete book content
         $author = $_GET['Autor'] ?? 'Unknown Author';
         $topics = $_GET['Thema'];

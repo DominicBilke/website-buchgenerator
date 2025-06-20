@@ -58,7 +58,7 @@ try {
     }
     
     // Download cover image if available
-    $bild = './uploads/'.uniqid().'.png';
+$bild = './uploads/'.uniqid().'.png';
     if (!empty($book_data['cover_image'])) {
         $bilddaten = file_get_contents($book_data['cover_image'], false, $ctx);
         if ($bilddaten !== false) {
@@ -69,13 +69,13 @@ try {
 } catch (Exception $e) {
     // Fallback to original method if AI generation fails
     $bild = './uploads/'.uniqid().'.png';
-    $bilddaten = file_get_contents("https://askgpt.bilke-projects.com/image_1.php?".http_build_query(array("ask" => $thema)), false, $ctx);
-    file_put_contents($bild, $bilddaten, false, $ctx);
-    
+$bilddaten = file_get_contents("https://askgpt.bilke-projects.com/image_1.php?".http_build_query(array("ask" => $thema)), false, $ctx);
+file_put_contents($bild, $bilddaten, false, $ctx);
+
     // Load existing content files
-    foreach($themen as $t) 
-    if($t) {
-        $text[$t] = file_get_contents('uploads/'.$t, false, $ctx);
+foreach($themen as $t) 
+if($t) {
+ $text[$t] = file_get_contents('uploads/'.$t, false, $ctx);
     }
 }
 
@@ -107,13 +107,13 @@ if (isset($book_data['table_of_contents'])) {
     // Fallback to original table of contents
     $html .= '<ol>
     <li>Einleitung</li>';
-    
-    foreach($themen as $i => $t) 
-    if($t && !str_contains($t, 'vorwort') && !str_contains($t, 'nachwort'))
-      $html .= '<li>Kapitel '.($i).': '.str_replace(".html", "", $t).'</li>';
-    
-    $html .= '
-    <li>Schluss</li>
+
+foreach($themen as $i => $t) 
+if($t && !str_contains($t, 'vorwort') && !str_contains($t, 'nachwort'))
+  $html .= '<li>Kapitel '.($i).': '.str_replace(".html", "", $t).'</li>';
+
+$html .= '
+<li>Schluss</li>
     </ol>';
 }
 
@@ -139,23 +139,23 @@ if (isset($book_data['chapters'])) {
     }
 } else {
     // Fallback to original chapters
-    foreach($themen as $i => $t) 
-    if($t && str_contains($t, 'vorwort'))
-    $html .= '
-    <br pagebreak="true"/>
-    <div class="site">
-    <h1>Einleitung</h1>
-    <blockquote>'.$text[$t].'</blockquote>
+foreach($themen as $i => $t) 
+if($t && str_contains($t, 'vorwort'))
+$html .= '
+<br pagebreak="true"/>
+<div class="site">
+<h1>Einleitung</h1>
+<blockquote>'.$text[$t].'</blockquote>
     </div>';
 
-    foreach($themen as $i => $t) 
-    if($t && !str_contains($t, 'vorwort') && !str_contains($t, 'nachwort')) {
-    $html .= '
-    <br pagebreak="true"/>
-    <div class="site">
-    <h1>Kapitel '.($i).': '.str_replace(".html", "", $t).'</h1>
-    <blockquote>'.str_replace("<form", '<form action="#"', $text[$t]).'</blockquote>
-    </div>';
+foreach($themen as $i => $t) 
+if($t && !str_contains($t, 'vorwort') && !str_contains($t, 'nachwort')) {
+$html .= '
+<br pagebreak="true"/>
+<div class="site">
+<h1>Kapitel '.($i).': '.str_replace(".html", "", $t).'</h1>
+<blockquote>'.str_replace("<form", '<form action="#"', $text[$t]).'</blockquote>
+</div>';
     }
 }
 
@@ -169,13 +169,13 @@ if (isset($book_data['afterword'])) {
     </div>';
 } else {
     // Fallback to original afterword
-    foreach($themen as $i => $t) 
-    if($t && str_contains($t, 'nachwort'))
-    $html .= '
-    <br pagebreak="true"/>
-    <div class="site">
-    <h1>Schluss</h1>
-    <blockquote>'.$text[$t].'</blockquote>
+foreach($themen as $i => $t) 
+if($t && str_contains($t, 'nachwort'))
+$html .= '
+<br pagebreak="true"/>
+<div class="site">
+<h1>Schluss</h1>
+<blockquote>'.$text[$t].'</blockquote>
     </div>';
 }
 
