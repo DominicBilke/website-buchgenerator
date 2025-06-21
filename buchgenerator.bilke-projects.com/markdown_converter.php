@@ -44,7 +44,7 @@ class MarkdownConverter {
         
         // Convert ordered lists
         $html = preg_replace('/^[\s]*\d+\.\s+(.*$)/m', '<li>$1</li>', $html);
-        $html = preg_replace('/(<li>.*<\/li>)/s', '<ol>$1</ol>', $html);
+        $html = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $html);
         
         // Convert blockquotes
         $html = preg_replace('/^>\s+(.*$)/m', '<blockquote>$1</blockquote>', $html);

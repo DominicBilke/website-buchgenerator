@@ -213,9 +213,9 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         $pdf->AddPage();
         
         // Chapter title
-        $pdf->SetFont(PDF_FONT_NAME, 'B', 12);
-        $pdf->Cell(0, 10, 'Chapter ' . ($i + 1) . ': ' . $chapter['title'], 0, 1, 'L');
-        $pdf->Ln(5);
+        //$pdf->SetFont(PDF_FONT_NAME, 'B', 12);
+        //$pdf->Cell(0, 10, 'Chapter ' . ($i + 1) . ': ' . $chapter['title'], 0, 1, 'L');
+        //$pdf->Ln(5);
         
         // Chapter image
         if (!empty($chapter['local_image']) && file_exists($chapter['local_image'])) {
@@ -225,7 +225,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         
         // Chapter content
         $pdf->SetFont(PDF_FONT_NAME, '', 12);
-        $pdf->writeHTML('<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><div style="text-align: justify; line-height: 1.6;">' . 
+        $pdf->writeHTML('<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><div style="text-align: justify; line-height: 1.6;">' . 
                        MarkdownConverter::convertSafe($chapter['content']) . '</div>', true, false, true, false, '');
     }
     
