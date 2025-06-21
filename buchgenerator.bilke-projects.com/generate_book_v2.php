@@ -146,7 +146,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         
         public function Header() {
             if ($this->getPage() > 1) {
-                $this->SetFont(PDF_FONT_NAME, 'B', 12);
+                $this->SetFont(PDF_FONT_NAME, 'B', 8);
                 $this->Cell(0, 10, $this->book_title . ' | ' . $this->book_author, 0, false, 'C');
             }
         }
@@ -170,8 +170,8 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
     
     // Set margins
     $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-    $pdf->SetHeaderMargin(PDF_MARGIN_TOP);
-    $pdf->SetFooterMargin(PDF_MARGIN_BOTTOM);
+    //$pdf->SetHeaderMargin(PDF_MARGIN_TOP);
+    //$pdf->SetFooterMargin(PDF_MARGIN_BOTTOM);
     
     // Set auto page breaks
     $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
@@ -184,18 +184,15 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
     
     // Add cover page
     $pdf->AddPage();
-    $pdf->SetFont(PDF_FONT_NAME, 'B', 24);
-    $pdf->Cell(0, 60, $book_data['title'], 0, 1, 'C');
+    $pdf->SetFont(PDF_FONT_NAME, 'B', 11);
+    $pdf->Cell(0, 30, $book_data['title'], 0, 1, 'C');
+    $pdf->Cell(0, 10, 'By ' . $book_data['author'], 0, 1, 'R');
+    $pdf->Cell(0, 10, $publisher, 0, 1, 'R');
+    $pdf->Cell(0, 10, date('F Y'), 0, 1, 'R');
     
     if ($cover_image_path && file_exists($cover_image_path)) {
         $pdf->Image($cover_image_path, 30, 80, 150);
     }
-    
-    $pdf->SetFont(PDF_FONT_NAME, '', 14);
-    $pdf->Cell(0, 20, '', 0, 1);
-    $pdf->Cell(0, 10, 'By ' . $book_data['author'], 0, 1, 'C');
-    $pdf->Cell(0, 10, $publisher, 0, 1, 'C');
-    $pdf->Cell(0, 10, date('F Y'), 0, 1, 'C');
     
     // Add table of contents
     $pdf->AddPage();
@@ -222,13 +219,13 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         
         // Chapter image
         if (!empty($chapter['local_image']) && file_exists($chapter['local_image'])) {
-            $pdf->Image($chapter['local_image'], 30, $pdf->GetY(), 150);
+            $pdf->Image($chapter['local_image'], 30, $pdf->GetY(), 80);
             $pdf->Ln(60);
         }
         
         // Chapter content
         $pdf->SetFont(PDF_FONT_NAME, '', 11);
-        $pdf->writeHTML('<div style="text-align: justify; line-height: 1.6;">' . 
+        $pdf->writeHTML('<br/><br/><br/><br/><br/><br/><br/><br/><div style="text-align: justify; line-height: 1.6;">' . 
                        MarkdownConverter::convertSafe($chapter['content']) . '</div>', true, false, true, false, '');
     }
     
