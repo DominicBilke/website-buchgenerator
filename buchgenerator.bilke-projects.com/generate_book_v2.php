@@ -204,7 +204,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
     foreach ($toc_lines as $line) {
         $line = trim($line);
         if (!empty($line)) {
-            $pdf->Cell(0, 8, $line, 0, 1, 'L');
+            $pdf->Cell(0, 8, MarkdownConverter::convertSafe($line), 0, 1, 'L');
         }
     }
     
@@ -214,7 +214,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         
         // Chapter title
         $pdf->SetFont(PDF_FONT_NAME, 'B', 16);
-        $pdf->Cell(0, 10, 'Chapter ' . ($i + 1) . ': ' . $chapter['title'], 0, 1, 'L');
+        $pdf->Cell(0, 10, 'Chapter ' . ($i + 1) . ': ' . MarkdownConverter::convertSafe($chapter['title']), 0, 1, 'L');
         $pdf->Ln(5);
         
         // Chapter image
