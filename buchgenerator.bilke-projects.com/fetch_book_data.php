@@ -1,5 +1,8 @@
 <?php
- header("Access-Control-Allow-Origin: *");
+require_once 'config.php';
+require_once 'markdown_converter.php';
+
+header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json; charset=utf-8');
 
 function call_python_script($command) {
@@ -78,11 +81,11 @@ else if(isset($_GET['Thema'])) {
             if (!empty($chapter['image'])) {
                 $html_content .= "<img src='" . htmlspecialchars($chapter['image']) . "' alt='Chapter Image' style='max-width: 100%; height: auto;'><br><br>";
             }
-            $html_content .= "<div>" . nl2br(htmlspecialchars($chapter['content'])) . "</div>";
+            $html_content .= "<div>" . MarkdownConverter::convertSafe($chapter['content']) . "</div>";
         }
         
         $html_content .= "<h2>Afterword</h2>";
-        $html_content .= "<div>" . nl2br(htmlspecialchars($result['afterword'])) . "</div>";
+        $html_content .= "<div>" . MarkdownConverter::convertSafe($result['afterword']) . "</div>";
         
         file_put_contents('uploads/'.$_GET['Thema'].'.html', $html_content, false, $ctx);
         

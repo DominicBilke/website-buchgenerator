@@ -67,6 +67,9 @@ def create_env_file():
     env_content = """# OpenAI API Configuration
 OPENAI_API_KEY=your-openai-api-key-here
 
+# Unsplash API Configuration (for images)
+UNSPLASH_API_KEY=your-unsplash-api-key-here
+
 # Optional: Customize AI behavior
 OPENAI_MODEL=gpt-4
 OPENAI_MAX_TOKENS=2000
@@ -80,7 +83,8 @@ DALL_E_SIZE=1024x1024
         with open('.env', 'w') as f:
             f.write(env_content)
         print("✅ Created .env file template")
-        print("   Please edit .env and add your OpenAI API key")
+        print("   Please edit .env and add your OpenAI API key and Unsplash API key")
+        print("   Get your Unsplash API key from: https://unsplash.com/developers")
     else:
         print("ℹ️  .env file already exists")
 

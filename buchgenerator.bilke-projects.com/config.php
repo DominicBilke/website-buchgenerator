@@ -17,7 +17,7 @@ define('CSS_PATH', ROOT_PATH . '/css');
 define('IMG_PATH', ROOT_PATH . '/img');
 
 // Python settings
-define('PYTHON_SCRIPT', ROOT_PATH . '/ai_generator.py');
+define('PYTHON_SCRIPT', ROOT_PATH . '/ai_generator_v2.py');
 define('PYTHON_COMMAND', 'python3'); // Change to 'python' on Windows if needed
 
 // OpenAI settings

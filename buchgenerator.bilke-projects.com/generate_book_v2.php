@@ -5,10 +5,11 @@
  */
 
 require_once 'config.php';
+require_once 'markdown_converter.php';
 
 // Set error handling
 if (APP_DEBUG) {
-    error_reporting(E_ALL);
+    error_reporting(0);
     ini_set('display_errors', 1);
 }
 
@@ -84,10 +85,10 @@ try {
         'success' => true,
         'pdf_url' => 'uploads/' . $pdf_filename,
         'book_data' => [
-            'title' => $book_data['title'],
-            'author' => $book_data['author'],
-            'total_words' => $book_data['total_words'],
-            'chapter_count' => $book_data['chapter_count']
+            'title' => htmlentities($book_data['title']),
+            'author' => htmlentities($book_data['author']),
+            'total_words' => htmlentities($book_data['total_words']),
+            'chapter_count' => htmlentities($book_data['chapter_count'])
         ]
     ]);
     
@@ -228,7 +229,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         // Chapter content
         $pdf->SetFont(PDF_FONT_NAME, '', 11);
         $pdf->writeHTML('<div style="text-align: justify; line-height: 1.6;">' . 
-                       nl2br(htmlspecialchars($chapter['content'])) . '</div>', true, false, true, false, '');
+                       MarkdownConverter::convertSafe($chapter['content']) . '</div>', true, false, true, false, '');
     }
     
     // Add afterword
@@ -240,7 +241,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         
         $pdf->SetFont(PDF_FONT_NAME, '', 11);
         $pdf->writeHTML('<div style="text-align: justify; line-height: 1.6;">' . 
-                       nl2br(htmlspecialchars($book_data['afterword'])) . '</div>', true, false, true, false, '');
+                       MarkdownConverter::convertSafe($book_data['afterword']) . '</div>', true, false, true, false, '');
     }
     
     // Generate filename and save

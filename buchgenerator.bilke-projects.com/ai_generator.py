@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 AI Content Generator for Book Generator
-Handles text generation and image creation using OpenAI APIs
+Handles text generation and image creation using OpenAI APIs and Unsplash
 """
 
 import os
@@ -29,7 +29,13 @@ class AIGenerator:
         if not self.openai_api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required")
         
+        # Unsplash API configuration
+        self.unsplash_api_key = os.getenv('UNSPLASH_API_KEY')
+        if not self.unsplash_api_key:
+            logging.warning("UNSPLASH_API_KEY not found. Using fallback image URLs.")
+        
         self.openai_base_url = "https://api.openai.com/v1"
+        self.unsplash_base_url = "https://api.unsplash.com"
         self.headers = {
             "Authorization": f"Bearer {self.openai_api_key}",
             "Content-Type": "application/json"
@@ -42,7 +48,7 @@ class AIGenerator:
             data = {
                 "model": "gpt-4",
                 "messages": [
-                    {"role": "system", "content": "You are a professional book writer and content creator. Write engaging, informative, and well-structured content."},
+                    {"role": "system", "content": "You are a professional book writer and content creator. Write engaging, informative, and well-structured content in the requested language."},
                     {"role": "user", "content": prompt}
                 ],
                 "max_tokens": max_tokens,
@@ -62,27 +68,80 @@ class AIGenerator:
             raise
     
     def generate_image(self, prompt: str, size: str = "1024x1024") -> str:
-        """Generate image using OpenAI DALL-E API"""
+        """Generate image using Unsplash API instead of DALL-E"""
         try:
-            url = f"{self.openai_base_url}/images/generations"
-            data = {
-                "prompt": prompt,
-                "n": 1,
-                "size": size,
-                "response_format": "url"
+            if not self.unsplash_api_key:
+                # Fallback to placeholder images if no Unsplash API key
+                return self._get_fallback_image(prompt)
+            
+            # Convert prompt to search terms for Unsplash
+            search_query = self._convert_prompt_to_search_query(prompt)
+            
+            # Search for images on Unsplash
+            url = f"{self.unsplash_base_url}/search/photos"
+            headers = {
+                "Authorization": f"Client-ID {self.unsplash_api_key}",
+                "Content-Type": "application/json"
             }
             
-            response = requests.post(url, headers=self.headers, json=data, timeout=60)
+            params = {
+                "query": search_query,
+                "per_page": 1,
+                "orientation": "landscape" if "cover" in prompt.lower() else "portrait"
+            }
+            
+            response = requests.get(url, headers=headers, params=params, timeout=30)
             response.raise_for_status()
             
             result = response.json()
-            image_url = result['data'][0]['url']
-            logging.info(f"Generated image successfully: {image_url}")
-            return image_url
             
+            if result['results']:
+                image_url = result['results'][0]['urls']['regular']
+                logging.info(f"Found Unsplash image: {image_url}")
+                return image_url
+            else:
+                logging.warning(f"No Unsplash images found for query: {search_query}")
+                return self._get_fallback_image(prompt)
+                
         except Exception as e:
-            logging.error(f"Error generating image: {str(e)}")
-            raise
+            logging.error(f"Error getting Unsplash image: {str(e)}")
+            return self._get_fallback_image(prompt)
+    
+    def _convert_prompt_to_search_query(self, prompt: str) -> str:
+        """Convert DALL-E prompt to Unsplash search query"""
+        # Remove common DALL-E specific terms
+        prompt = prompt.lower()
+        prompt = prompt.replace("create a professional", "")
+        prompt = prompt.replace("create a", "")
+        prompt = prompt.replace("style: modern, clean, professional", "")
+        prompt = prompt.replace("no text in image", "")
+        prompt = prompt.replace("high quality and visually appealing", "")
+        prompt = prompt.replace("suitable for a serious book", "")
+        prompt = prompt.replace("clean design with space for title and author name", "")
+        
+        # Extract key terms
+        words = prompt.split()
+        # Keep only meaningful words (remove common stop words)
+        stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours', 'his', 'hers', 'ours', 'theirs'}
+        
+        meaningful_words = [word for word in words if word not in stop_words and len(word) > 2]
+        
+        # Take first 3-5 meaningful words
+        search_query = " ".join(meaningful_words[:5])
+        
+        # If no meaningful words, use a default
+        if not search_query.strip():
+            search_query = "professional business"
+        
+        logging.info(f"Converted prompt '{prompt}' to search query: '{search_query}'")
+        return search_query
+    
+    def _get_fallback_image(self, prompt: str) -> str:
+        """Get fallback image URL when Unsplash is not available"""
+        # Use Picsum Photos as fallback
+        import random
+        seed = hash(prompt) % 1000
+        return f"https://picsum.photos/800/600?random={seed}"
     
     def generate_book_content(self, author: str, topics: List[str], language: str = "German") -> Dict:
         """Generate complete book content including chapters and images"""
@@ -93,7 +152,11 @@ class AIGenerator:
             
             # Generate table of contents
             toc_prompt = f"""Create a detailed table of contents for a book titled "{book_title}" about {', '.join(topics)}. 
-            Include 8-12 chapters with descriptive titles. Format as a numbered list.
+            Include 8-12 chapters with descriptive titles. 
+            Format as a numbered list using markdown:
+            - Use 1. 2. 3. format for chapter numbers
+            - Each chapter title on a new line
+            - Make titles descriptive and engaging
             Language: {language}"""
             table_of_contents = self.generate_text(toc_prompt, max_tokens=1000, temperature=0.7)
             
@@ -105,8 +168,21 @@ class AIGenerator:
                 chapter_prompt = f"""Write a comprehensive chapter for the book "{book_title}" titled "{chapter_title}".
                 Topics to cover: {', '.join(topics)}
                 Language: {language}
-                Make it engaging, informative, and well-structured with subheadings.
-                Length: 800-1200 words."""
+                
+                Requirements:
+                - Make it engaging, informative, and well-structured
+                - Use markdown formatting for better organization:
+                  * Use ## for subheadings
+                  * Use **bold** for emphasis
+                  * Use *italic* for important terms
+                  * Use bullet points (- or *) for lists
+                  * Use numbered lists (1. 2. 3.) where appropriate
+                  * Use > for important quotes or callouts
+                - Length: 800-1200 words
+                - Professional tone but accessible
+                - Include practical examples where relevant
+                - Ensure good flow and readability
+                - Structure with clear sections and subsections"""
                 
                 chapter_content = self.generate_text(chapter_prompt, max_tokens=2000, temperature=0.7)
                 
@@ -128,7 +204,19 @@ class AIGenerator:
             # Generate afterword
             afterword_prompt = f"""Write a thoughtful afterword for the book "{book_title}" by {author}.
             Language: {language}
-            Include author's final thoughts and acknowledgments."""
+            
+            Use markdown formatting:
+            - Use **bold** for emphasis
+            - Use *italic* for personal reflections
+            - Use bullet points (- or *) for acknowledgments
+            - Use > for final thoughts or quotes
+            
+            Include:
+            - Author's final thoughts and reflections
+            - Acknowledgments
+            - Call to action or closing thoughts
+            - Professional tone but personal touch"""
+            
             afterword = self.generate_text(afterword_prompt, max_tokens=800, temperature=0.7)
             
             # Generate cover image

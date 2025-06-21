@@ -4,6 +4,9 @@
  * A working version that can be easily tested and improved
  */
 
+require_once 'config.php';
+require_once 'markdown_converter.php';
+
 // Basic configuration
 $config = [
     'python_script' => 'simple_generator.py',
@@ -107,7 +110,7 @@ function generatePDF($bookData, $uploadDir) {
             $html .= '<div class="image"><img src="' . htmlspecialchars($chapter['image']) . '" alt="Chapter Image"></div>';
         }
         
-        $html .= '<div>' . nl2br(htmlspecialchars($chapter['content'])) . '</div>';
+        $html .= '<div>' . MarkdownConverter::convertSafe($chapter['content']) . '</div>';
         $html .= '</div>';
     }
     
@@ -115,7 +118,7 @@ function generatePDF($bookData, $uploadDir) {
     if (!empty($bookData['afterword'])) {
         $html .= '<div class="afterword">';
         $html .= '<h2>Afterword</h2>';
-        $html .= '<div>' . nl2br(htmlspecialchars($bookData['afterword'])) . '</div>';
+        $html .= '<div>' . MarkdownConverter::convertSafe($bookData['afterword']) . '</div>';
         $html .= '</div>';
     }
     

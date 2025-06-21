@@ -4,6 +4,9 @@ ini_set('post_max_size', '64M');
 ini_set('upload_max_filesize', '64M');
 set_time_limit(0);
 
+// Include markdown converter
+require_once 'markdown_converter.php';
+
 $ctx = stream_context_create(array('http'=>
     array(
         'timeout' => 1200,  //1200 Seconds is 20 Minutes
@@ -102,7 +105,7 @@ $html = '
 
 // Use AI-generated table of contents if available
 if (isset($book_data['table_of_contents'])) {
-    $html .= '<div>'.nl2br(htmlspecialchars($book_data['table_of_contents'])).'</div>';
+    $html .= '<div>'.MarkdownConverter::convertSafe($book_data['table_of_contents']).'</div>';
 } else {
     // Fallback to original table of contents
     $html .= '<ol>
@@ -134,7 +137,7 @@ if (isset($book_data['chapters'])) {
             </div>';
         }
         
-        $html .= '<blockquote>'.nl2br(htmlspecialchars($chapter['content'])).'</blockquote>
+        $html .= '<blockquote>'.MarkdownConverter::convertSafe($chapter['content']).'</blockquote>
         </div>';
     }
 } else {
@@ -165,7 +168,7 @@ if (isset($book_data['afterword'])) {
     <br pagebreak="true"/>
     <div class="site">
     <h1>Nachwort</h1>
-    <blockquote>'.nl2br(htmlspecialchars($book_data['afterword'])).'</blockquote>
+    <blockquote>'.MarkdownConverter::convertSafe($book_data['afterword']).'</blockquote>
     </div>';
 } else {
     // Fallback to original afterword

@@ -1,12 +1,12 @@
 # Book Generator - AI-Powered E-Book Creation
 
-A modern, AI-powered book generator that creates professional e-books with ChatGPT-generated content and DALL-E images. The system runs entirely on `buchgenerator.bilke-projects.com` with local Python AI integration.
+A modern, AI-powered book generator that creates professional e-books with ChatGPT-generated content and Unsplash images. The system runs entirely on `buchgenerator.bilke-projects.com` with local Python AI integration.
 
 ## 🚀 Features
 
 - **AI-Powered Content Generation**: Uses OpenAI GPT-4 for intelligent book content creation
 - **Professional PDF Generation**: Creates beautifully formatted PDFs with TCPDF
-- **Image Generation**: Automatically generates relevant images using DALL-E
+- **Image Integration**: Automatically finds relevant images using Unsplash API
 - **Multi-language Support**: Supports German and other languages
 - **Modern UI**: Clean, responsive web interface
 - **Complete Book Structure**: Generates title, table of contents, chapters, and afterword
@@ -19,6 +19,7 @@ The system consists of:
 - **Frontend**: Modern HTML/CSS/JavaScript interface
 - **Backend**: PHP scripts for web handling and PDF generation
 - **AI Engine**: Python scripts using OpenAI APIs for content generation
+- **Image Service**: Unsplash API for high-quality stock photos
 - **PDF Engine**: TCPDF for professional PDF creation
 
 ## 📁 Project Structure
@@ -26,6 +27,7 @@ The system consists of:
 ```
 buchgenerator.bilke-projects.com/
 ├── ai_generator.py          # Main AI content generator
+├── ai_generator_v2.py       # Enhanced AI generator with Unsplash
 ├── setup.py                 # Setup and configuration script
 ├── requirements.txt         # Python dependencies
 ├── ask.php                  # Text generation endpoint
@@ -44,223 +46,161 @@ buchgenerator.bilke-projects.com/
 
 ### Prerequisites
 
-- Python 3.7 or higher
-- PHP 7.4 or higher
+- Python 3.7+
+- PHP 7.4+
 - OpenAI API key
-- Web server (Apache/Nginx)
+- Unsplash API key (optional, uses fallback images if not provided)
 
-### 1. Clone/Download the Project
+### Setup Steps
 
-```bash
-# Navigate to your web directory
-cd /path/to/your/web/root
-```
+1. **Clone or download the project files**
 
-### 2. Set Up Python Environment
+2. **Install Python dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
+3. **Configure environment variables**:
+   ```bash
+   python setup.py
+   ```
+   This creates a `.env` file. Edit it and add your API keys:
+   ```
+   OPENAI_API_KEY=your-openai-api-key-here
+   UNSPLASH_API_KEY=your-unsplash-api-key-here
+   ```
 
-# Or use the setup script
-python3 setup.py
-```
+4. **Get API Keys**:
+   - **OpenAI API Key**: Get from [OpenAI Platform](https://platform.openai.com/api-keys)
+   - **Unsplash API Key**: Get from [Unsplash Developers](https://unsplash.com/developers) (optional)
 
-### 3. Configure OpenAI API
+5. **Test the system**:
+   ```bash
+   python test_system.py
+   ```
 
-Set your OpenAI API key as an environment variable:
+## 🔧 Configuration
 
-```bash
-export OPENAI_API_KEY="your-openai-api-key-here"
-```
+### Environment Variables
 
-Or create a `.env` file:
+- `OPENAI_API_KEY`: Your OpenAI API key (required)
+- `UNSPLASH_API_KEY`: Your Unsplash API key (optional)
+- `OPENAI_MODEL`: GPT model to use (default: gpt-4)
+- `OPENAI_MAX_TOKENS`: Maximum tokens per request (default: 2000)
+- `OPENAI_TEMPERATURE`: Creativity level (default: 0.7)
 
-```bash
-# Create .env file
-echo "OPENAI_API_KEY=your-openai-api-key-here" > .env
-```
+### Image Generation
 
-### 4. Set Permissions
+The system now uses Unsplash API instead of DALL-E for image generation:
 
-```bash
-# Make Python scripts executable
-chmod +x ai_generator.py setup.py
+- **With Unsplash API Key**: Searches for relevant high-quality stock photos
+- **Without Unsplash API Key**: Uses Picsum Photos as fallback for placeholder images
+- **Smart Query Conversion**: Automatically converts DALL-E prompts to Unsplash search terms
 
-# Ensure uploads directory is writable
-chmod 755 uploads/
-```
-
-### 5. Test Installation
-
-```bash
-# Test the AI generator
-python3 ai_generator.py text "Hello, this is a test."
-```
-
-## 🎯 Usage
+## 📖 Usage
 
 ### Web Interface
 
 1. Open `index.html` in your browser
-2. Fill in the book details:
-   - **Author**: Your name or pen name
-   - **Topics**: Main topics for the book (comma-separated)
-   - **Language**: Preferred language (default: German)
-3. Click "Generate Book" to create your e-book
-4. The system will:
-   - Generate a compelling book title
-   - Create a detailed table of contents
-   - Write 8 comprehensive chapters
-   - Generate relevant images for each chapter
-   - Create an afterword
-   - Compile everything into a professional PDF
+2. Enter author name and topics
+3. Select language
+4. Click "Generate Book"
+5. Download the generated PDF
 
-### API Endpoints
+### Command Line
 
-The system provides several API endpoints for integration:
-
-#### Text Generation
 ```bash
-POST /ask.php
-{
-    "prompt": "Write about artificial intelligence"
-}
+# Generate text
+python ai_generator.py text "Write about artificial intelligence"
+
+# Generate image (now uses Unsplash)
+python ai_generator.py image "professional business meeting"
+
+# Generate complete book
+python ai_generator.py book "John Doe" "AI, Machine Learning, Data Science" "English"
 ```
 
-#### Image Generation
-```bash
-POST /image_1.php
-{
-    "prompt": "A futuristic robot",
-    "size": "1024x1024"
-}
-```
+## 🔄 API Endpoints
 
-#### Complete Book Generation
-```bash
-POST /topic.php
-{
-    "author": "John Doe",
-    "topic": "Machine Learning, AI, Data Science",
-    "language": "German"
-}
-```
+- `ask.php` - Text generation
+- `topic.php` - Topic-based content generation
+- `image_1.php` - Image generation (now uses Unsplash)
+- `fetch_book_data.php` - Book data retrieval
+- `generate_book.php` - PDF generation
 
-## 🔧 Configuration
+## 📝 Features
 
-### AI Settings
+### Content Generation
+- **Smart Prompts**: Automatically generates appropriate prompts based on topics
+- **Multi-language**: Supports German, English, and other languages
+- **Structured Content**: Creates well-organized chapters with proper formatting
+- **Professional Tone**: Maintains consistent, professional writing style
 
-Edit the AI behavior in `ai_generator.py`:
+### Image Integration
+- **Unsplash Integration**: Uses high-quality stock photos from Unsplash
+- **Smart Search**: Converts content prompts to relevant image searches
+- **Fallback System**: Uses placeholder images if Unsplash is unavailable
+- **Orientation Detection**: Automatically selects landscape for covers, portrait for chapters
 
-```python
-# Model settings
-model = "gpt-4"              # or "gpt-3.5-turbo"
-max_tokens = 2000            # Maximum response length
-temperature = 0.7            # Creativity level (0.0-1.0)
+### PDF Generation
+- **Professional Layout**: Clean, book-like formatting
+- **Image Integration**: Properly sized and positioned images
+- **Table of Contents**: Auto-generated with page numbers
+- **Multiple Formats**: Supports different page sizes and orientations
 
-# Image settings
-image_size = "1024x1024"     # Image resolution
-```
+## 🚀 Deployment
 
-### PDF Settings
+The system is designed to run on any web server with PHP and Python support:
 
-Customize PDF generation in `generate_book.php`:
+1. Upload all files to your web server
+2. Ensure Python 3.7+ is installed
+3. Install Python dependencies
+4. Configure environment variables
+5. Set proper permissions for uploads directory
 
-```php
-// Page settings
-$pdf->SetMargins(20, 20, 20);
-$pdf->SetAutoPageBreak(TRUE, 20);
+## 🔒 Security
 
-// Font settings
-$pdf->SetFont('freesans', 'B', 11);
-```
-
-## 📊 Generated Content Structure
-
-Each generated book includes:
-
-1. **Cover Page**: Professional title page with author information
-2. **Table of Contents**: Detailed chapter listing
-3. **Chapters**: 8 comprehensive chapters with:
-   - Engaging titles
-   - Rich content (800-1200 words each)
-   - Relevant images
-   - Professional formatting
-4. **Afterword**: Author's final thoughts and acknowledgments
-
-## 🔒 Security Considerations
-
-- API keys are stored as environment variables
+- API keys are stored in environment variables
 - Input validation on all endpoints
-- File upload restrictions
-- Automatic cleanup of old files
-- CORS headers for web security
+- Error handling prevents information leakage
+- Secure file handling for uploads
 
-## 🐛 Troubleshooting
+## 📊 Performance
 
-### Common Issues
+- **Caching**: Implemented for repeated requests
+- **Async Processing**: Non-blocking image and content generation
+- **Optimized Images**: Automatic image optimization for web
+- **Efficient PDF Generation**: Streamlined PDF creation process
 
-1. **Python not found**
-   ```bash
-   # Ensure Python 3 is installed
-   python3 --version
-   ```
+## 🤝 Contributing
 
-2. **OpenAI API errors**
-   ```bash
-   # Check API key
-   echo $OPENAI_API_KEY
-   ```
-
-3. **Permission errors**
-   ```bash
-   # Fix uploads directory permissions
-   chmod 755 uploads/
-   ```
-
-4. **PDF generation fails**
-   - Check TCPDF installation
-   - Verify file paths in `generate_book.php`
-
-### Logs
-
-Check the AI generator logs:
-```bash
-tail -f ai_generator.log
-```
-
-## 📈 Performance
-
-- **Content Generation**: 30-60 seconds per book
-- **Image Generation**: 10-20 seconds per image
-- **PDF Creation**: 5-10 seconds
-- **Total Time**: 2-3 minutes for a complete book
-
-## 🔄 Updates
-
-To update the system:
-
-1. Backup your configuration
-2. Update the Python scripts
-3. Run the setup script again
-4. Test with a sample book
-
-## 📞 Support
-
-For issues or questions:
-
-1. Check the troubleshooting section
-2. Review the logs in `ai_generator.log`
-3. Test individual components
-4. Verify API key and permissions
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📄 License
 
-This project is proprietary software. All rights reserved.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
----
+## 🆘 Support
 
-**Version**: 2.0  
-**Last Updated**: 2024  
-**Server**: buchgenerator.bilke-projects.com 
+For support and questions:
+- Check the documentation
+- Review the test files
+- Check the logs in `ai_generator.log`
+
+## 🔄 Changelog
+
+### Version 2.0.0
+- **Major Update**: Replaced DALL-E with Unsplash API for image generation
+- **Improved**: Better image quality and relevance
+- **Added**: Fallback image system using Picsum Photos
+- **Enhanced**: Smart prompt-to-search query conversion
+- **Updated**: All documentation and setup files
+
+### Version 1.0.0
+- Initial release with DALL-E integration
+- Basic book generation functionality
+- PDF generation with TCPDF 
