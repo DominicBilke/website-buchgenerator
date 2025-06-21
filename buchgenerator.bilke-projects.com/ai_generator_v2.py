@@ -26,8 +26,8 @@ def setup_logging():
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler(log_dir / 'ai_generator.log', encoding='utf-8'),
-            logging.StreamHandler(sys.stdout)
+            logging.FileHandler(log_dir / 'ai_generator.log', encoding='utf-8')
+            # logging.StreamHandler(sys.stdout)
         ]
     )
 
