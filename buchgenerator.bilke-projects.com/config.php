@@ -6,7 +6,7 @@
 
 // Application settings
 define('APP_NAME', 'AI Book Generator');
-define('APP_VERSION', '2.0.0');
+define('APP_VERSION', '2.1.0');
 define('APP_DEBUG', true);
 
 // File paths (cross-platform compatible)
