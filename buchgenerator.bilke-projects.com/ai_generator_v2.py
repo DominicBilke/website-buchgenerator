@@ -34,12 +34,12 @@ def setup_logging():
 class AIGenerator:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize AI Generator with OpenAI API key and Unsplash API key"""
-        self.openai_api_key = api_key or os.getenv('OPENAI_API_KEY')
+        self.openai_api_key = api_key or os.environ['OPENAI_API_KEY']
         if not self.openai_api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required")
         
         # Unsplash API configuration
-        self.unsplash_api_key = os.getenv('UNSPLASH_API_KEY')
+        self.unsplash_api_key = api_key or os.environ['UNSPLASH_API_KEY']
         if not self.unsplash_api_key:
             logging.warning("UNSPLASH_API_KEY not found. Using fallback image URLs.")
         
@@ -245,7 +245,7 @@ class AIGenerator:
                 chapter_content = self.generate_text(chapter_prompt, max_tokens=2000, temperature=0.7)
                 
                 # Generate image for chapter
-                image_prompt = f"""Create a professional illustration for a book chapter about {chapter_title}. 
+                image_prompt = f"""Create a professional illustration about {chapter_title}. 
                 Style: modern, clean, professional, relevant to the content.
                 No text in image. High quality and visually appealing."""
                 

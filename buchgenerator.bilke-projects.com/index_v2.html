@@ -62,6 +62,8 @@
         }
 
         .form-control {
+            min-width: 100%;
+            max-width: 100%;
             width: 100%;
             padding: 15px;
             border: 2px solid #e1e5e9;
@@ -274,7 +276,7 @@
             <div class="feature">
                 <i class="fas fa-image"></i>
                 <h3>Custom Images</h3>
-                <p>Automatically create relevant images for each chapter using DALL-E</p>
+                <p>Automatically create relevant images for each chapter using Unsplash</p>
             </div>
             <div class="feature">
                 <i class="fas fa-file-pdf"></i>
@@ -330,8 +332,13 @@
                     body: formData
                 });
                 
-                const result = await response.json();
-                
+		try {
+                	var result = await response.json();
+                }
+		catch (e) {
+			console.log(await response.text());
+			var result = { success: 0 };
+		}
                 clearInterval(progressInterval);
                 progressFill.style.width = '100%';
                 progressText.textContent = 'Complete!';
