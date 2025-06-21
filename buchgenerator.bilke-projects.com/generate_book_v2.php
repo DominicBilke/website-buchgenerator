@@ -225,7 +225,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         
         // Chapter content
         $pdf->SetFont(PDF_FONT_NAME, '', 11);
-        $pdf->writeHTML('<br/><br/><br/><br/><br/><br/><br/><br/><div style="text-align: justify; line-height: 1.6;">' . 
+        $pdf->writeHTML('<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><div style="text-align: justify; line-height: 1.6;">' . 
                        MarkdownConverter::convertSafe($chapter['content']) . '</div>', true, false, true, false, '');
     }
     
