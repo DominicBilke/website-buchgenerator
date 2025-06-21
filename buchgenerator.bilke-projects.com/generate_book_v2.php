@@ -184,7 +184,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
     
     // Add cover page
     $pdf->AddPage();
-    $pdf->SetFont(PDF_FONT_NAME, 'B', 11);
+    $pdf->SetFont(PDF_FONT_NAME, 'B', 12);
     $pdf->Cell(0, 30, $book_data['title'], 0, 1, 'C');
     $pdf->Cell(0, 10, 'By ' . $book_data['author'], 0, 1, 'R');
     $pdf->Cell(0, 10, $publisher, 0, 1, 'R');
@@ -196,7 +196,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
     
     // Add table of contents
     $pdf->AddPage();
-    $pdf->SetFont(PDF_FONT_NAME, 'B', 16);
+    $pdf->SetFont(PDF_FONT_NAME, 'B', 12);
     $pdf->Cell(0, 10, 'Table of Contents', 0, 1, 'L');
     $pdf->SetFont(PDF_FONT_NAME, '', 12);
     
@@ -213,7 +213,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         $pdf->AddPage();
         
         // Chapter title
-        $pdf->SetFont(PDF_FONT_NAME, 'B', 16);
+        $pdf->SetFont(PDF_FONT_NAME, 'B', 12);
         $pdf->Cell(0, 10, 'Chapter ' . ($i + 1) . ': ' . $chapter['title'], 0, 1, 'L');
         $pdf->Ln(5);
         
@@ -224,7 +224,7 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
         }
         
         // Chapter content
-        $pdf->SetFont(PDF_FONT_NAME, '', 11);
+        $pdf->SetFont(PDF_FONT_NAME, '', 12);
         $pdf->writeHTML('<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><div style="text-align: justify; line-height: 1.6;">' . 
                        MarkdownConverter::convertSafe($chapter['content']) . '</div>', true, false, true, false, '');
     }
@@ -232,11 +232,11 @@ function generatePDF($book_data, $author, $publisher, $cover_image_path) {
     // Add afterword
     if (!empty($book_data['afterword'])) {
         $pdf->AddPage();
-        $pdf->SetFont(PDF_FONT_NAME, 'B', 16);
+        $pdf->SetFont(PDF_FONT_NAME, 'B', 12);
         $pdf->Cell(0, 10, 'Afterword', 0, 1, 'L');
         $pdf->Ln(5);
         
-        $pdf->SetFont(PDF_FONT_NAME, '', 11);
+        $pdf->SetFont(PDF_FONT_NAME, '', 12);
         $pdf->writeHTML('<div style="text-align: justify; line-height: 1.6;">' . 
                        MarkdownConverter::convertSafe($book_data['afterword']) . '</div>', true, false, true, false, '');
     }
