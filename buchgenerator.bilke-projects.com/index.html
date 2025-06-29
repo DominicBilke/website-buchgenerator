@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="KI-Generator! Erstellt KI-Wissen über ein bestimmtes Thema." />
+	<meta name="google-site-verification" content="yb5Yqk8nfn2-TnALkRs4aCMODwuepy4sa5EHJZ6mtf0" />
+    	<link rel="stylesheet" href="css/style.css">
+	<title>KI-Generator</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script>
+(function($) {
+  // Empty object, we are going to use this as our Queue
+  var ajaxQueue = $({});
+
+  $.ajaxQueue = function(ajaxOpts) {
+    // hold the original complete function
+    var oldComplete = ajaxOpts.complete;
+
+    // queue our ajax request
+    ajaxQueue.queue(function(next) {    
+
+      // create a complete callback to fire the next event in the queue
+      ajaxOpts.complete = function() {
+        // fire the original complete if it was there
+        if (oldComplete) oldComplete.apply(this, arguments);    
+        next(); // run the next query in the queue
+      };
+
+      // run the query
+      $.ajax(ajaxOpts);
+    });
+  };
+
+})(jQuery);
+
+		function progressArea() {
+			for (const el of document.getElementById('form').querySelectorAll("[required]")) {
+ 				 if (!el.reportValidity()) {
+				    return false;
+				  }
+			}
+			var topic_files = [];
+			var dyn_functions = [];
+			var divcode = `
+					$.ajaxQueue({
+						url: "-url-", 
+    tryCount : 0,
+    retryLimit : 10,
+						success: function(data){
+							topic_files[-id-] = data;
+							document.getElementById('topics').value = topic_files.join('\\n');
+							document.getElementById("-imgid-").src="img/checked.png";
+							$("#-loadid-").html(\'<img src="img/checked.png" style="height:50px;" id="-imgid-" /><strong>Thema -topic- geladen! </strong>\');
+						},
+  error : function(xhr, textStatus, errorThrown ) {
+        if (textStatus == "timeout") {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajaxQueue(this);
+                return;
+            }            
+            return;
+        }
+        if (xhr.status == 500) {
+            console.log("RETRY STATUS 500");
+        } else {
+            console.log("RETRY STATUS "+xhr.status);
+        }
+    }
+					});
+					`;
+			var divele = `
+				<div id="-loadid-">
+					<img src="img/loading.gif" style="height:50px;" id="-imgid-" /> <strong>Lade -topic- ... </strong>
+				</div>`;
+			var html = '';
+			var eval_code = '';
+			var language = document.getElementById('language').value;
+			var topic = document.getElementById('topic').value;
+			var topics = document.getElementById('topics').value.split('\n');
+			html += divele.replace('-loadid-', 'div_0').replace('-imgid-', 'img_0').replace('-topic-', 'Vorwort').replace('-url-', 'https://buchgenerator.bilke-projects.com/fetch_book_data.php?Vorwort=1&Sprache='+language+'&Thema='+topic);
+			eval_code += divcode.replace('-id-', '0').replace('-loadid-', 'div_0').replace('-imgid-', 'img_0').replace('-topic-', 'Vorwort').replace('-url-', 'https://buchgenerator.bilke-projects.com/fetch_book_data.php?Vorwort=1&Sprache='+language+'&Thema='+topic);
+			for(var i=1; i <= topics.length; i++) {
+				html += divele.replace('-loadid-', 'div_'+i).replace('-imgid-', 'img_'+i).replace('-topic-', topics[i-1]).replace('-url-', 'https://buchgenerator.bilke-projects.com/fetch_book_data.php?Thema='+topics[i-1]+'&Sprache='+language);
+				eval_code += divcode.replace('-id-', i).replace('-loadid-', 'div_'+i).replace('-imgid-', 'img_'+i).replace('-topic-', topics[i-1]).replace('-url-', 'https://buchgenerator.bilke-projects.com/fetch_book_data.php?Thema='+topics[i-1]+'&Sprache='+language);
+			}
+			html += divele.replace('-loadid-', 'div_'+(i+1)).replace('-imgid-', 'div_'+(i+1)).replace('-topic-', 'Nachwort').replace('-url-', 'https://buchgenerator.bilke-projects.com/fetch_book_data.php?Nachwort=1&Thema='+topic+'&Sprache='+language);
+			eval_code += divcode.replace('-id-', i).replace('-loadid-', 'div_'+(i+1)).replace('-imgid-', 'div_'+(i+1)).replace('-topic-', 'Nachwort').replace('-url-', 'https://buchgenerator.bilke-projects.com/fetch_book_data.php?Nachwort=1&Thema='+topic+'&Sprache='+language);
+			document.getElementById('progressarea').innerHTML = html;
+			console.log(eval_code);
+			eval(eval_code);
+			document.getElementById('daten').style.visibility = 'hidden';
+			document.getElementById('buch').style.visibility = 'visible';
+			document.getElementById('form').action = '/generate_book.php';
+		}
+	</script>
+  	<style>
+button:hover {
+    background-color: #45a049;
+}
+button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+	</style>
+</head>
+<body>
+<!--div class="gtranslate_wrapper"></div>
+<script>window.gtranslateSettings = {"default_language":"de","native_language_names":true,"detect_browser_language":true,"languages":["de","fr","it","es","en"],"wrapper_selector":".gtranslate_wrapper"}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script-->
+<header>
+    <a class="ribbon" tabindex="-1" title="zurück zur Startseite!" href="index.html">
+	   <h1 id="logo">KI-Generator</h1>
+    </a>  
+</header>
+
+<main>
+
+	<nav id="navigation">
+	<ul>
+		<li><a aria-current="page">Start</a></li>
+		<li><a href="1-ueber_uns.html">Über uns</a></li>
+		<li><a href="1-datenschutz.html">Datenschutz</a></li>
+		<li><a href="1-impressum.html">Impressum</a>
+		<li><a href="2-contact.html">Kontakt</a></li>
+	</ul>
+	</nav>
+     	
+	<section id="intro">   
+	<h2>Die Daten können im Formular eingegeben werden!</h2>
+    <p>
+		Nutzen Sie bitte das Formular, um zu generieren.<br/> Die Daten werden übernommen, danach automatisch im PDF-Format erzeugt.<br/> Dieses können Sie versenden, ausdrucken oder speichern.
+	</p>
+    </section>
+    <article>
+	Vorbereitung siehe <a href="https://www.gpt-fragen.de" target="_new">https://www.gpt-fragen.de</a>.
+    </article>	    
+    <article>
+   		 <!--h2>KI-Generator</h2>
+				<form action="/generate_book.php" method="post" id="form" enctype="multipart/form-data">
+ 				<label for="Titel">Titel:</label><br/>
+				<input name="Titel" type="text" required /><br/><br/>
+ 				<label for="Author">Autor:</label><br/>
+				<input name="Author" type="text" required /><br/><br/>
+ 				<label for="Verlag">Verlag:</label><br/>
+				<input name="Verlag" type="text" required /><br/><br/>
+ 				<label for="Sprache">Sprache:</label><br/>
+				<input name="Sprache" type="text" required value="German" id="language" /><br/><br/>
+ 				<label for="Thema">Thema:</label><br/>
+				<input name="Thema" type="text" required id="topic" /><br/><br/>
+ 				<label for="Themen">Themen (zeilenweise):</label><br/>
+				<textarea name="Themen" required  style="white-space: pre-wrap;" rows="20" id="topics" ></textarea><br/><br/>
+  				<input type="submit" name="generieren" id="buch" value="Nach Generierung erstellen!" style="visibility:hidden;"/>
+			</form>  				
+<button name="daten" id="daten" onClick="progressArea();">Daten generieren!</button>
+			<div id="progressarea">
+
+			</div-->
+			<iframe style="width:100%;height:1500px;border:0;" src="index_v2.html">NO IFRAME SUPPORT</iframe>
+    </article>
+
+    
+
+</main>
+
+<footer class="grid">
+    <ul id="footer-nav">
+		<li><a href="2-contact.html" title="Kontakt"><img src="img/info.svg" alt="info"></a></li>
+	</ul>
+    <!--p>
+    	Design: Duit, <a href="http://designenlassen.de/">designenlassen.de</a><br>
+		technische Umsetzung: <a href="http://selfhtml.org">selfhtml.org</a>
+    </p-->    
+</footer>  
+    
+</body>
+</html>

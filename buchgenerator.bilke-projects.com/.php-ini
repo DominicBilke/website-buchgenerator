@@ -1,0 +1,7 @@
+/var/www/vhosts/system/buchgenerator.bilke-projects.com/etc/php.ini
+
+display_errors = off
+upload_max_filesize = 512M
+post_max_size = 256M
+session.gc_maxlifetime = 2592000
+max_execution_time = 86400
